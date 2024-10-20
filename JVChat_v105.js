@@ -4,7 +4,7 @@
 // @author         Blaff
 // @namespace      JVChatPremium
 // @license        MIT
-// @version        0.1.105
+// @version        0.1.106
 // @match          http://*.jeuxvideo.com/forums/42-*
 // @match          https://*.jeuxvideo.com/forums/42-*
 // @match          http://*.jeuxvideo.com/forums/1-*
@@ -1401,6 +1401,7 @@ function parseMessage(elem) {
     let conteneurs = elem.getElementsByClassName("conteneur-message");
     let conteneur = conteneurs[conteneurs.length - 1];
     let author = conteneur.getElementsByClassName("bloc-pseudo-msg")[0].textContent.trim();
+    let classepseudo = conteneur.getElementsByClassName("bloc-pseudo-msg")[0].getAttribute("class");
     let blacklisted = conteneurs[0].classList.contains("conteneur-message-blacklist");
     let avatar = conteneur.getElementsByClassName("user-avatar-msg")[0];
     if (avatar !== undefined) {
@@ -1416,7 +1417,7 @@ function parseMessage(elem) {
     }
     return {
         author: author, dateString: date, date: parseDate(date), avatar: avatar, edited: edited,
-        id: id, content: content, blacklisted: blacklisted
+        id: id, content: content, classepseudo: classepseudo, blacklisted: blacklisted
     };
 }
 
@@ -2231,10 +2232,18 @@ function makeMessage(message) {
     let authorHref = exists ? `href="https://www.jeuxvideo.com/profil/${author.toLowerCase()}?mode=infos"` : "";
     let authorTitle = exists ? `title="Ouvrir le profil de ${author}"` : "";
     let authorAvatarHidden = exists ? "" : "class='jvchat-hide-visibility'";
+    let classepseudo = message.classepseudo;
+    if (classepseudo.includes("text-") && !classepseudo.includes("text-user")) {
+        pseudocolor = classepseudo.split(' ')[3];
+    } else {
+        pseudocolor = '';
+    }
     let editionSpan = '<span class="jvchat-edit jvchat-picto" title="Modifier"></span>';
     let deletionSpan = '<span class="jvchat-delete jvchat-picto" title="Supprimer"></span>';
+    let messageHref = exists ? `href="/forums/message/${id}" style="color: inherit; text-decoration: none;"` : ""; 
     let deletion = (currentUser.author === undefined) || (message.author.toLowerCase() !== currentUser.author.toLowerCase()) ? "" : deletionSpan;
     let edition = (currentUser.author === undefined) || (message.author.toLowerCase() !== currentUser.author.toLowerCase()) ? "" : editionSpan;
+    let permalink = (currentUser.author === undefined) || (message.author.toLowerCase() !== currentUser.author.toLowerCase()) ? "" : messageHref;
     let html =
         `<div class="jvchat-bloc-message">
             <div class="jvchat-message" jvchat-id=${id}>
@@ -2250,7 +2259,9 @@ function makeMessage(message) {
                             ${deletion}
                             ${edition}
                             <span class="jvchat-picto jvchat-quote" title="Citer"></span>
-                            <small class="jvchat-date" to-quote="${toQuoteDate}" title="${titleDate}">${textDate}</small>
+                           <small class="jvchat-date" to-quote="${toQuoteDate}" title="${titleDate}">
+                                <a ${permalink} target="_blank">${textDate}</a>
+                            </small>
                         </div>
                     </div>
                     <div class="jvchat-content">${content.outerHTML}</div>
