@@ -4,7 +4,7 @@
 // @author         Blaff
 // @namespace      JVChatPremium
 // @license        MIT
-// @version        0.1.106
+// @version        0.1.107
 // @match          http://*.jeuxvideo.com/forums/42-*
 // @match          https://*.jeuxvideo.com/forums/42-*
 // @match          http://*.jeuxvideo.com/forums/1-*
@@ -2254,7 +2254,7 @@ function makeMessage(message) {
                 </div>
                 <div class="jvchat-bloc-author-content">
                     <div class="jvchat-toolbar">
-                        <h5 class="jvchat-author">${author}</h5>
+                        <h5 class="jvchat-author ${pseudocolor}">${author}</h5>
                         <div class="jvchat-tooltip">
                             ${deletion}
                             ${edition}
